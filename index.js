@@ -23,16 +23,31 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 client.connect((err) => {
 	// console.log('error',err );
 	const bookCollection = client.db('book-shop').collection('books');
+	const orderCollection = client.db('book-shop').collection('orders');
 	
 	app.post('/addBook', (req, res) => {
       const newEvent = req.body;
-      console.log('adding new event: ', newEvent)
+    //   console.log('adding new event: ', newEvent)
       bookCollection.insertOne(newEvent)
       .then(result => {
           console.log('inserted count', result.insertedCount);
           res.send(result.insertedCount > 0)
       })
-  })
+	})
+	app.post('/addOrder', (req, res) => {
+      const newOrder = req.body;
+		console.log('adding new order: ', newOrder);
+      orderCollection.insertOne(newOrder)
+      .then(result => {
+          console.log('inserted count', result.insertedCount);
+          res.send(result.insertedCount > 0)
+      })
+	})
+	app.get('/books', (req, res) => {
+		bookCollection.find().toArray((err,items) => {
+			res.send(items);
+		})
+	})
 	
 });
 
